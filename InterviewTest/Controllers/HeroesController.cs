@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InterviewTest.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,22 +29,33 @@ namespace InterviewTest.Controllers
 
         // GET: api/Heroes
         [HttpGet]
-        public IEnumerable<Hero> Get()
+        public IEnumerable<IHero> Get()
         {
             return this.heroes;
         }
 
         // GET: api/Heroes/5
         [HttpGet("{id}", Name = "Get")]
-        public Hero Get(int id)
+        public IHero Get(int id)
         {
             return this.heroes.FirstOrDefault();
         }
 
         // POST: api/Heroes
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IEnumerable<IHero> Post([FromBody] string action)
         {
+            action = (string.IsNullOrEmpty(action)) ? "none" : action;
+
+            if (action == "evolve")
+            {
+                foreach (var hero in this.heroes)
+                {
+                    if (hero is IEvolve) ((IEvolve)hero).evolve();
+                }
+            }
+
+            return this.heroes;
         }
 
         // PUT: api/Heroes/5
